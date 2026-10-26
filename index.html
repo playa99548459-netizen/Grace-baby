@@ -162,4 +162,47 @@ document.getElementById("page").addEventListener("touchend",e=>{let dx=e.changed
 render();
 </script>
 </body>
+  <!-- Our Special Song ❤️ --><div id="love-player">
+  <button id="love-play-button" onclick="toggleLoveMusic()">
+    ♡ Play our song ♡
+  </button>
+  <audio id="love-audio" src="love.mp3" loop></audio>
+</div><style>
+  #love-player {
+    text-align: center;
+    padding: 15px;
+  }
+
+  #love-play-button {
+    background: linear-gradient(135deg, #f7b7c8, #e88ba8);
+    color: white;
+    border: 1px solid #fff0f4;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px #e88ba855;
+  }
+
+  #love-play-button:active {
+    transform: scale(0.96);
+  }
+</style><script>
+  async function toggleLoveMusic() {
+    const audio = document.getElementById("love-audio");
+    const button = document.getElementById("love-play-button");
+
+    if (audio.paused) {
+      try {
+        await audio.play();
+        button.textContent = "♫ Pause our song ♡";
+      } catch (error) {
+        button.textContent = "Couldn't play — tap again ♡";
+      }
+    } else {
+      audio.pause();
+      button.textContent = "♡ Play our song ♡";
+    }
+  }
+</script>
 </html>
