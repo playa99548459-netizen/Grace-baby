@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>For My Favourite Girl 🎀</title>
+<style>
+:root{--pink:#e99aaa;--rose:#b85c73;--cream:#fff9f0;--paper:#fffdf9;--ink:#704e50}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Georgia,serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+header{text-align:center;padding:27px 12px 12px}
+.bow{font-size:38px}
+h1{font-size:clamp(28px,7vw,44px);font-weight:normal;margin:8px 0;color:var(--rose)}
+.subtitle{font-style:italic;font-size:14px}
+#book{max-width:650px;margin:auto;padding:12px}
+.page{position:relative;background:var(--paper);border:1px solid #f1d6d7;border-radius:5px;padding:25px 20px 35px;min-height:480px;box-shadow:0 7px 24px #a85e6615;overflow:hidden}
+.page:before{content:"";position:absolute;inset:8px;border:1px dashed #edc4c8;pointer-events:none}
+.page>*{position:relative}
+.page h2{text-align:center;font-size:27px;font-weight:normal;color:var(--rose)}
+.center{text-align:center}
+.intro{font-size:18px;line-height:1.9;text-align:center}
+.primary{background:var(--rose);color:white;border:0;border-radius:24px;padding:12px 20px;margin:8px}
+.soft{background:#fbe8e9;color:var(--rose);border:1px solid #f1cbd0;border-radius:20px;padding:10px 15px;margin:4px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:15px 0}
+#counter{font-size:13px}
+.polaroids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:20px auto;max-width:440px}
+.polaroid{background:white;padding:9px 9px 14px;box-shadow:0 3px 9px #704e5020;transform:rotate(-2deg)}
+.polaroid:nth-child(even){transform:rotate(2deg)}
+.photo{height:145px;width:100%;object-fit:cover;background:#fbe8e9;display:block}
+.caption{text-align:center;font-size:13px;margin:12px 0 0}
+.letter{font-size:17px;line-height:1.9;white-space:pre-wrap}
+.note{background:#fff1cf;padding:15px;margin:12px 4px;transform:rotate(-1deg);box-shadow:0 3px 8px #704e5010}
+.sticker{position:absolute;z-index:4;font-size:30px;cursor:grab;touch-action:none;user-select:none}
+footer{text-align:center;padding:20px;font-size:12px;color:#a27b7f}
+#editor{max-width:650px;margin:12px auto;padding:15px;background:#fff0f1;border:1px solid #f1cbd0;border-radius:12px}
+#editor h3{margin-top:3px}
+#editor button{margin:4px}
+input[type=text],textarea{width:100%;padding:10px;border:1px solid #e7bfc6;border-radius:8px;background:white;margin:5px 0;color:var(--ink)}
+textarea{min-height:90px}
+.hidden{display:none!important}
+.tiny{font-size:12px;color:#98777b;line-height:1.6}
+#hug{font-size:70px;display:block;margin:20px auto;border:0;background:transparent}
+@media(max-width:400px){.page{padding:22px 14px;min-height:450px}.photo{height:120px}.polaroids{gap:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bow">🎀</div>
+  <h1>For My Favourite Girl</h1>
+  <div class="subtitle">a little world made with love ♡</div>
+</header>
+
+<main id="book">
+  <section class="page" id="page"></section>
+  <div class="nav">
+    <button class="soft" onclick="move(-1)">← Back</button>
+    <span id="counter"></span>
+    <button class="soft" onclick="move(1)">Next →</button>
+  </div>
+  <div class="center">
+    <button class="primary" onclick="randomNote()">💌 A little surprise</button>
+    <button class="soft" onclick="hug()">🫂 Hug me</button>
+  </div>
+</main>
+
+<div id="editor" class="hidden">
+  <h3>🎀 Your scrapbook studio</h3>
+  <p class="tiny">Changes save in this browser. Keep a backup of your words and photos. Browser storage does not automatically sync to her device.</p>
+  <label>Page to edit</label>
+  <select id="pageSelect" onchange="loadEditor()" style="width:100%;padding:10px;border:1px solid #e7bfc6;border-radius:8px"></select>
+  <label>Page title</label><input id="editTitle" type="text">
+  <label>Page text</label><textarea id="editText"></textarea>
+  <button class="primary" onclick="savePage()">Save page 💗</button>
+  <hr style="border:0;border-top:1px dashed #e7bfc6;margin:16px 0">
+  <h3>📸 Add a Polaroid</h3>
+  <label>Choose a photo</label><input id="photoFile" type="file" accept="image/*">
+  <label>Caption</label><input id="photoCaption" type="text" placeholder="My favourite memory...">
+  <button class="soft" onclick="addPhoto()">Add photo</button>
+  <button class="soft" onclick="removePhoto()">Remove last photo</button>
+  <p class="tiny">Use a small photo for better browser storage performance.</p>
+  <hr style="border:0;border-top:1px dashed #e7bfc6;margin:16px 0">
+  <h3>🌷 Personalise your journal</h3>
+  <button class="soft" onclick="addPage()">＋ New page</button>
+  <button class="soft" onclick="removePage()">− Remove selected page</button>
+  <button class="soft" onclick="addSticker()">Add draggable sticker 🎀</button>
+  <button class="soft" onclick="changeBg()">Change paper colour</button>
+  <button class="soft" onclick="downloadBackup()">Download backup</button>
+  <button class="soft" onclick="document.getElementById('restoreFile').click()">Restore backup</button>
+  <input id="restoreFile" type="file" accept=".json,application/json" class="hidden">
+  <button class="primary" onclick="toggleEditor()">Close editor</button>
+</div>
+
+<footer>
+  made with love, just for you ♡<br>
+  <button class="soft" onclick="toggleEditor()">✎ Scrapbook studio</button>
+</footer>
+
+<script>
+const defaults=[
+ {title:"Our Little World 🌷",text:"For my favourite girl, Old Ass 🎀\n\nIf I could give you one thing in this world, it would be the ability to see yourself through my eyes.\n\nMaybe then you'd understand just how special you are to me. ♡"},
+ {title:"Our Little Memories 📸",text:"Every little moment with you deserves a place in my heart.\n\nAdd your favourite photos below and turn this page into our own little photo album. 💗"},
+ {title:"A Letter For You 💌",text:"Dear Old Ass,\n\nI don't always know how to put my feelings into words, but I hope you always know how much you mean to me.\n\nYou make ordinary days feel special. Even when we're far apart, you have a way of making me smile.\n\nThank you for being you. I hope we keep making beautiful memories together.\n\nForever your annoying person,\nYour favourite idiot ♡"},
+ {title:"Little Things I Love About You 🎀",text:"♡ Your smile\n\n♡ The way you make me laugh\n\n♡ Your cute little expressions\n\n♡ The random moments we share\n\n♡ The fact that you are YOU.\n\nAdd your own reasons here. There are a million more. 🌷"},
+ {title:"A Hug For You 🫂",text:"If I were there right now, I'd pull you into the biggest hug.\n\nNo rushing away. No letting go too soon. Just a warm hug to remind you that you are loved.\n\nUntil then, here's your virtual one. ♡"},
+ {title:"A Little Secret 💗",text:"Psst... come closer. 🤫\n\nMy favourite notification is yours.\n\nMy favourite person is you.\n\nAnd if I had to choose all over again, I'd still want to know you.\n\nThis little corner of the internet? It's yours. Always remember that. 🎀"}
+];
+let data;
+try{data=JSON.parse(localStorage.getItem("forG_scrapbook"))}catch(e){}
+if(!data||!Array.isArray(data.pages))data={pages:defaults.map(x=>({...x})),photos:[],stickers:[],bg:"#fffdf9"};
+let index=0;
+function persist(){try{localStorage.setItem("forG_scrapbook",JSON.stringify(data))}catch(e){alert("Storage is full. Try smaller photos or download a backup.")}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){
+ if(index>=data.pages.length)index=data.pages.length-1;
+ if(index<0)index=0;
+ const p=data.pages[index];
+ const photoHtml=index===1?`<div class="polaroids">${data.photos.map((x,i)=>`<div class="polaroid"><img class="photo" src="${x.src}" alt="Scrapbook photo"><p class="caption">${esc(x.caption||"A little memory ♡")}</p></div>`).join("")}</div>`:"";
+ const stickers=data.stickers.map((s,i)=>`<span class="sticker" style="left:${s.x}%;top:${s.y}%" data-sticker="${i}">${esc(s.char)}</span>`).join("");
+ document.getElementById("page").style.background=data.bg;
+ document.getElementById("page").innerHTML=`${stickers}<h2>${esc(p.title)}</h2><div class="intro">${esc(p.text)}</div>${photoHtml}${index===4?'<button id="hug" onclick="hug()">🫂</button><p class="center">Tap for the warmest virtual hug.</p>':""}${index===5?'<div class="center"><button class="primary" onclick="reveal()">Tap to reveal 💌</button><p id="secret"></p></div>':""}`;
+ document.getElementById("counter").textContent=`${index+1} / ${data.pages.length}`;
+ document.getElementById("pageSelect").innerHTML=data.pages.map((x,i)=>`<option value="${i}">${i+1}. ${esc(x.title)}</option>`).join("");
+ document.getElementById("pageSelect").value=index;
+ enableDragging();
+}
+function move(n){index=(index+n+data.pages.length)%data.pages.length;render()}
+function toggleEditor(){document.getElementById("editor").classList.toggle("hidden");loadEditor()}
+function loadEditor(){let i=+document.getElementById("pageSelect").value||0;let p=data.pages[i];if(!p)return;document.getElementById("editTitle").value=p.title;document.getElementById("editText").value=p.text}
+function savePage(){let i=+document.getElementById("pageSelect").value;data.pages[i].title=document.getElementById("editTitle").value;data.pages[i].text=document.getElementById("editText").value;index=i;persist();render()}
+function addPage(){let title=prompt("Your new page title?","A New Memory ♡");if(title===null)return;data.pages.push({title,text:"Write your beautiful memories here. 💗"});index=data.pages.length-1;persist();render();loadEditor()}
+function removePage(){if(data.pages.length<=1)return alert("Keep at least one page!");if(confirm("Remove this page?")){data.pages.splice(+document.getElementById("pageSelect").value,1);index=Math.min(index,data.pages.length-1);persist();render();loadEditor()}}
+function addSticker(){let chars=["🎀","💗","🌷","♡","✨","🦋","💌","🌸"];let char=prompt("Choose a sticker: 🎀 💗 🌷 ♡ ✨ 🦋 💌 🌸","🎀");if(!char)return;data.stickers.push({char,x:8+Math.random()*70,y:10+Math.random()*65});persist();render()}
+function enableDragging(){
+ document.querySelectorAll("[data-sticker]").forEach(el=>{
+ let start=null;
+ el.addEventListener("pointerdown",e=>{start={x:e.clientX,y:e.clientY};el.setPointerCapture(e.pointerId)});
+ el.addEventListener("pointerup",e=>{if(!start)return;let rect=document.getElementById("page").getBoundingClientRect();let s=data.stickers[+el.dataset.sticker];s.x=Math.max(0,Math.min(90,s.x+(e.clientX-start.x)/rect.width*100));s.y=Math.max(0,Math.min(90,s.y+(e.clientY-start.y)/rect.height*100));start=null;persist();render()});
+ });
+}
+function changeBg(){let colors=["#fffdf9","#fff0f3","#fff5df","#f8f0ff","#f0f8ef"];let i=colors.indexOf(data.bg);data.bg=colors[(i+1)%colors.length];persist();render()}
+function randomNote(){let notes=["You are my favourite notification. 💗","Sending you one forehead kiss. 😚","Reminder: you're cute. Annoyingly cute. 🎀","Wish I could steal one hug from you right now. 🫂","I pick you. Today, tomorrow, and all the little days. 🌷"];alert(notes[Math.floor(Math.random()*notes.length)])}
+function hug(){alert("🫂 BIGGEST VIRTUAL HUG!!\n\nImagine me holding you close and not letting go for a while. 💗")}
+function reveal(){document.getElementById("secret").textContent="The secret is... you're loved more than this little website can ever explain. ♡"}
+function addPhoto(){
+ let f=document.getElementById("photoFile").files[0];if(!f)return alert("Choose a photo first!");
+ if(f.size>1200000)return alert("Choose a photo under 1.2 MB so the scrapbook can save properly.");
+ let r=new FileReader();r.onload=()=>{data.photos.push({src:r.result,caption:document.getElementById("photoCaption").value});index=1;persist();render();alert("Photo added! 💗")};r.readAsDataURL(f)
+}
+function removePhoto(){if(!data.photos.length)return alert("No photos to remove yet.");data.photos.pop();persist();render()}
+function downloadBackup(){
+ let blob=new Blob([JSON.stringify(data)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="for-my-favourite-girl-backup.json";a.click();URL.revokeObjectURL(a.href)
+}
+document.getElementById("restoreFile").addEventListener("change",e=>{
+ let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.pages))throw Error();data=d;index=0;persist();render();alert("Scrapbook restored! 💗")}catch(err){alert("That backup file doesn't look valid.")}};r.readAsText(f)
+});
+let touchX=0;
+document.getElementById("page").addEventListener("touchstart",e=>{touchX=e.changedTouches[0].screenX},{passive:true});
+document.getElementById("page").addEventListener("touchend",e=>{let dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>70)move(dx<0?1:-1)},{passive:true});
+render();
+</script>
+</body>
+</html>
